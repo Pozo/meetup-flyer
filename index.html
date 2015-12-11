@@ -17,9 +17,11 @@
 <script>
 var app = angular.module('meetup', []);
 app.controller('meetupCtrl', function($q, $scope, $http) {
-    this.token = '1b315c2af12294d15e633645c3';
-	this.baseUri = 'https://api.meetup.com';
-	this.namespace = '/2';
+    this.urlname = 'Craft-meetup';
+    this.id = '227205590';
+    
+	this.baseUri = 'api';
+	this.namespace = '/';
 
 	this.uri = this.baseUri + this.namespace;
 
@@ -28,7 +30,7 @@ app.controller('meetupCtrl', function($q, $scope, $http) {
 	var that = this;
 
 	this.getEventDetails = function(eventId) {
-		var requestUri = that.uri + '/events?key' + that.token + '&event_id=' + eventId +'&sign=true';
+		var requestUri = that.uri + 'event/' + that.urlname + '/' + that.id;
 		
 		return $http.get(requestUri);		
 	}

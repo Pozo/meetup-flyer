@@ -1,0 +1,39 @@
+*.class
+*.apk
+/gen
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# IDE specific files
+#intelliJ
+.idea
+*.iml
+target
+project.properties
+local.properties
+
+#eclipse
+classes
+*.classpath
+.settings
+.project
+bin
+
+# gradle specific files
+.gradle
+gradle
+build
+gradlew
+gradlew.bat
+
+# node specific files
+node_modules
