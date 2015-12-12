@@ -1,48 +1,125 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="meetup" ng-controller="meetupCtrl as meetup">
 <head>
     <meta charset="UTF-8">
-    <title>Meetup Flyer</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    <title>{{meetup.event.group.name}}</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    <style>
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            font: 12pt "Tahoma";
+        }
+
+        * {
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 10mm auto;
+            border: 1px #D3D3D3 solid;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .subpage {
+            padding: 1cm;
+            border: 5px red solid;
+            height: 257mm;
+            outline: 2cm #FFEAEA solid;
+        }
+
+        .img-center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .less-padding {
+            margin: 8px;
+        }
+        #description {
+            text-align: justify;
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        @media print {
+            html, body {
+                width: 210mm;
+                height: 257mm;
+            }
+
+            .page {
+                margin: 0;
+                border: initial;
+                border-radius: initial;
+                width: initial;
+                min-height: initial;
+                box-shadow: initial;
+                background: initial;
+                page-break-after: always;
+            }
+        }
+    </style>
+    <base href="/">
 </head>
 <body>
-<div ng-app="meetup" ng-controller="meetupCtrl as meetup"> 
+<div class="page">
+    <image class="img-center" src="logo.png"></image>
+    <h1 align="center" class="less-padding">{{meetup.event.group.name}}</h1>
+    <h2 align="center" class="less-padding">{{meetup.event.name}}</h2>
+    <h3 align="center" class="less-padding">{{meetup.event.time | date:'yyyy.MMMM.dd HH:mm'}}</h3>
 
-<ul>
-  <div ng-repeat="details in meetup.details">
-	<span>{{details.id}}<span>
-	<span>{{details.status}}<span>
-  </div>
-</ul>
-<script>
-var app = angular.module('meetup', []);
-app.controller('meetupCtrl', function($q, $scope, $http) {
-    this.urlname = 'Craft-meetup';
-    this.id = '227205590';
-    
-	this.baseUri = 'api';
-	this.namespace = '/';
+    <div id="description" ng-bind-html="meetup.safeDescription"></div>
 
-	this.uri = this.baseUri + this.namespace;
+    <h3 align="center" class="less-padding">{{meetup.event.venue.city}}</h3>
+    <h3 align="center" class="less-padding">{{meetup.event.venue.name}}</h3>
+    <h3 align="center" class="less-padding">{{meetup.event.venue.address_1}}</h3>
 
-	this.details = [];	
-	
-	var that = this;
+    <img class="img-center" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{meetup.event.link}}"/>
+    <script>
+        angular.module('meetup', [], function ($locationProvider) {
+            $locationProvider.html5Mode({
+                enabled: true
+            });
+        }).controller('meetupCtrl', function ($q, $sce, $scope, $http, $location) {
+            this.urlname = $location.path().split("/")[1] || "Unknown";
+            this.id = $location.path().split("/")[2] || "Unknown";
+            this.safeDescription;
 
-	this.getEventDetails = function(eventId) {
-		var requestUri = that.uri + 'event/' + that.urlname + '/' + that.id;
-		
-		return $http.get(requestUri);		
-	}
-	this.getEventDetails(225560856).then(function(payload) {
-		var details = payload.data;
-		
-		//angular.forEach(details, function(project, key) {
-		
-		//});
-	});
-});
-</script>
+            this.baseUri = 'http://localhost:8000';
+            this.namespace = '/';
+
+            this.uri = this.baseUri + this.namespace;
+
+            this.event = {};
+
+            var that = this;
+
+            this.getEventDetails = function () {
+
+                var requestUri = that.uri + that.urlname + '/events/' + that.id;
+
+                return $http.get(requestUri);
+            }
+            this.getEventDetails().then(function (payload) {
+                that.event = payload.data;
+                that.safeDescription = $sce.trustAsHtml(that.event.description);
+                console.log(that.event);
+            });
+        });
+    </script>
 </div>
 </body>
 </html>
