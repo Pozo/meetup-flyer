@@ -42,11 +42,17 @@
             margin-left: auto;
             margin-right: auto;
         }
-        .less-padding {
-            margin: 8px;
+        .less-margin {
+            margin: 4px 0 4px 0;
         }
-        #description {
+		#header {
+            height: 128px;
+        }
+        #body {
             text-align: justify;
+        }
+		#footer {
+            
         }
 
         @page {
@@ -76,47 +82,39 @@
 </head>
 <body>
 <div class="page">
-    <image class="img-center" src="logo.png"></image>
-    <h1 align="center" class="less-padding">{{meetup.event.group.name}}</h1>
-    <h2 align="center" class="less-padding">{{meetup.event.name}}</h2>
-    <h3 align="center" class="less-padding">{{meetup.event.time | date:'yyyy.MMMM.dd HH:mm'}}</h3>
+	<div id="header">
+		<image align="right" src="logo.png"></image>
+		<div>
+			<h1 align="left" class="less-margin">{{meetup.event.group.name}}</h1>
+			<h2 align="left" class="less-margin">{{meetup.event.name}}</h2>
+			<h3 align="left" class="less-margin">{{meetup.event.time | date:'yyyy.MMMM.dd HH:mm'}}</h3>
+		</div>
+	</div>
+    <div id="body" ng-bind-html="meetup.safeDescription"></div>
+	<div id="footer">
+    <!--h3 align="center" class="less-padding">{{meetup.event.venue.city}}</h3-->
+		<h3 align="center" class="less-padding">{{meetup.event.venue.name}}</h3>
+		<h3 align="center" class="less-padding">{{meetup.event.venue.address_1}}</h3>
 
-    <div id="description" ng-bind-html="meetup.safeDescription"></div>
-
-    <h3 align="center" class="less-padding">{{meetup.event.venue.city}}</h3>
-    <h3 align="center" class="less-padding">{{meetup.event.venue.name}}</h3>
-    <h3 align="center" class="less-padding">{{meetup.event.venue.address_1}}</h3>
-
-    <img class="img-center" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{meetup.event.link}}"/>
+		<img class="img-center" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{meetup.event.link}}"/>
+	</div>
     <script>
         angular.module('meetup', [], function ($locationProvider) {
             $locationProvider.html5Mode({
                 enabled: true
             });
         }).controller('meetupCtrl', function ($q, $sce, $scope, $http, $location) {
-            this.urlname = $location.path().split("/")[1] || "Unknown";
-            this.id = $location.path().split("/")[2] || "Unknown";
             this.safeDescription;
-
-            this.baseUri = 'http://localhost:8000';
-            this.namespace = '/';
-
-            this.uri = this.baseUri + this.namespace;
-
             this.event = {};
-
             var that = this;
 
             this.getEventDetails = function () {
-
-                var requestUri = that.uri + that.urlname + '/events/' + that.id;
-
-                return $http.get(requestUri);
+				var locationWithDifferentPort = $location.protocol() + '://'+ $location.host() +':'+  8000  + $location.url();
+                return $http.get(locationWithDifferentPort);
             }
             this.getEventDetails().then(function (payload) {
                 that.event = payload.data;
                 that.safeDescription = $sce.trustAsHtml(that.event.description);
-                console.log(that.event);
             });
         });
     </script>
