@@ -23,6 +23,8 @@ Generate a printable flyer which helps you to promote meetups in your office. It
   - **Optional**: If you have to login in order to reach additional information about the meetup, you have to add your key to the url http://localhost:8080/Craft-meetup/events/227205590?key={{YOUR.API.KEY}}
   - **$$** Profit **$$**
   
+![Meetup Flyer](https://github.com/Pozo/meetup-flyer/blob/master/flyer.png "Meetup Flyer")
+
 ## Licensing
 
 Please see LICENSE file
