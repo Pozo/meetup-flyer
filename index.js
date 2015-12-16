@@ -1,9 +1,7 @@
 var http = require('http'),
     httpProxy = require('http-proxy'),
     static = require('node-static');
-//
-// Create a proxy server with custom application logic
-//
+
 var proxy = httpProxy.createProxyServer(
     {changeOrigin: true}
 );
@@ -11,7 +9,6 @@ proxy.on('proxyReq', function (proxyReq, req, res, options) {
     proxyReq.setHeader('Accept-Encoding', 'gzip, deflate, sdch');
     proxyReq.setHeader('user-agent', 'Mozilla/5.0(Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.80 Safari/537.36');
     proxyReq.setHeader('accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8');
-	//proxyReq.setHeader('Referer', req.headers.referer + '?sign=true&key=3c697639401620276161393434366f3f');
 });
 var server = http.createServer(function (req, res) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
